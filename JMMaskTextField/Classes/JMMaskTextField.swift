@@ -85,6 +85,11 @@ extension JMMaskTextField: UITextFieldDelegate {
         let previousMask = self.stringMask
         let currentText: NSString = textField.text as NSString? ?? ""
         
+        let newText = currentText.replacingCharacters(in: range, with: string)
+        
+        guard let maskCount = self.stringMask?.mask.count,
+            newText.count <= maskCount else { return false }
+        
         if let realDelegate = self.realDelegate, realDelegate.responds(to: #selector(textField(_:shouldChangeCharactersIn:replacementString:))) {
             let delegateResponse = realDelegate.textField!(textField, shouldChangeCharactersIn: range, replacementString: string)
             
@@ -95,7 +100,6 @@ extension JMMaskTextField: UITextFieldDelegate {
         
         guard let mask = self.stringMask else { return true }
         
-        let newText = currentText.replacingCharacters(in: range, with: string)
         var formattedString = mask.mask(string: newText)
         
         // if the mask changed or if the text couldn't be formatted,

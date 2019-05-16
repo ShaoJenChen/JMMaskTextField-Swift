@@ -32,10 +32,23 @@ public struct JMStringMask: Equatable {
     
     public func mask(string: String?) -> String? {
         
-        guard let string = string else { return nil }
-
-        if string.count > self.mask.count {
-            return nil
+        guard var string = string else { return nil }
+        
+        let pureMask = self.mask.replacingOccurrences(of: "-", with: "", options: .literal, range: nil)
+        
+        var pureString = string.replacingOccurrences(of: "-", with: "", options: .literal, range: nil)
+        
+        if pureString.count > pureMask.count {
+            
+            if let offsetIndex = pureString.index(pureString.startIndex, offsetBy: pureMask.count, limitedBy: pureString.endIndex) {
+                
+                let range = offsetIndex ..< pureString.endIndex
+                
+                pureString.removeSubrange(range)
+                
+                string = pureString
+            }
+            
         }
         
         var formattedString = ""
